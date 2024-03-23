@@ -1,6 +1,6 @@
 {
   "blast-testnet": {
-    "Contract": {
+    "OutswapV1Factory": {
       "address": "0x5A32bca57480f0B9910EcDB8DB854649b1E4F38C",
       "startBlock": 2910026
     }

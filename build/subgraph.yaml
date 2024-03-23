@@ -2,7 +2,7 @@ specVersion: 1.0.0
 indexerHints:
   prune: auto
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: OutswapV1Factory
@@ -19,11 +19,11 @@ dataSources:
         - PairCreated
       abis:
         - name: OutswapV1Factory
-          file: ./abis/OutswapV1Factory.json
+          file: OutswapV1Factory\abis\OutswapV1Factory.json
       eventHandlers:
         - event: PairCreated(indexed address,indexed address,address,uint256)
           handler: handlePairCreated
-      file: ./src/OutswapV1Factory.ts
+      file: OutswapV1Factory\OutswapV1Factory.wasm
 templates:
   - name: OutswapV1Pair
     kind: ethereum/contract
@@ -34,12 +34,12 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/OutswapV1Pair.ts
+      file: templates\OutswapV1Pair\OutswapV1Pair.wasm
       entities:
         - LiquidityHolding
       abis:
         - name: OutswapV1Pair
-          file: ./abis/OutswapV1Pair.json
+          file: OutswapV1Pair\abis\OutswapV1Pair.json
       eventHandlers:
         - event: Mint(indexed address,indexed address,uint256,uint256)
           handler: handleMint
