@@ -92,58 +92,6 @@ export class PairCreated extends Entity {
   set pair(value: Bytes) {
     this.set("pair", Value.fromBytes(value));
   }
-
-  get param3(): BigInt {
-    let value = this.get("param3");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set param3(value: BigInt) {
-    this.set("param3", Value.fromBigInt(value));
-  }
-
-  get blockNumber(): BigInt {
-    let value = this.get("blockNumber");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set blockNumber(value: BigInt) {
-    this.set("blockNumber", Value.fromBigInt(value));
-  }
-
-  get blockTimestamp(): BigInt {
-    let value = this.get("blockTimestamp");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set blockTimestamp(value: BigInt) {
-    this.set("blockTimestamp", Value.fromBigInt(value));
-  }
-
-  get transactionHash(): Bytes {
-    let value = this.get("transactionHash");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBytes();
-    }
-  }
-
-  set transactionHash(value: Bytes) {
-    this.set("transactionHash", Value.fromBytes(value));
-  }
 }
 
 export class LiquidityHolding extends Entity {
@@ -213,6 +161,32 @@ export class LiquidityHolding extends Entity {
 
   set user(value: Bytes) {
     this.set("user", Value.fromBytes(value));
+  }
+
+  get token0(): Bytes {
+    let value = this.get("token0");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set token0(value: Bytes) {
+    this.set("token0", Value.fromBytes(value));
+  }
+
+  get token1(): Bytes {
+    let value = this.get("token1");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set token1(value: Bytes) {
+    this.set("token1", Value.fromBytes(value));
   }
 
   get amount0(): BigInt {

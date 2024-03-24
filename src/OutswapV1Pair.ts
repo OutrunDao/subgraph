@@ -2,7 +2,7 @@ import {
   Mint as MintEvent,
   Burn as BurnEvent,
 } from "../generated/templates/OutswapV1Pair/OutswapV1Pair";
-import { LiquidityHolding } from "../generated/schema";
+import { LiquidityHolding, PairCreated } from "../generated/schema";
 import { BigInt } from "@graphprotocol/graph-ts";
 import { store } from "@graphprotocol/graph-ts";
 
@@ -11,6 +11,8 @@ export function handleMint(event: MintEvent): void {
 
   let id = event.address.toHex() + "-" + event.params.to.toHex();
   let entity = LiquidityHolding.load(id);
+  // find from PairCreated entity where pair address is equal to event.address
+  let pairCreated = PairCreated.load(event.address)!;
   if (entity == null) {
     entity = new LiquidityHolding(id);
     entity.amount0 = event.params.amount0;
@@ -21,6 +23,8 @@ export function handleMint(event: MintEvent): void {
   }
   entity.pair = event.address;
   entity.user = event.params.to;
+  entity.token0 = pairCreated.token0;
+  entity.token1 = pairCreated.token1;
   entity.save();
 }
 
