@@ -8,9 +8,9 @@ dataSources:
     name: OutswapV1Factory
     network: blast-testnet
     source:
-      address: "0x5A32bca57480f0B9910EcDB8DB854649b1E4F38C"
+      address: "0x3cEca1C6e131255e7C95788D40581934E84A1F9d"
       abi: OutswapV1Factory
-      startBlock: 2910026
+      startBlock: 3305611
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

@@ -1,8 +1,8 @@
 {
   "blast-testnet": {
     "OutswapV1Factory": {
-      "address": "0x5A32bca57480f0B9910EcDB8DB854649b1E4F38C",
-      "startBlock": 2910026
+      "address": "0x3cEca1C6e131255e7C95788D40581934E84A1F9d",
+      "startBlock": 3305611
     }
   }
 }
