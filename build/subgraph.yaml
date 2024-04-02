@@ -37,9 +37,12 @@ templates:
       file: templates\OutswapV1Pair\OutswapV1Pair.wasm
       entities:
         - LiquidityHolding
+        - PairTvl
       abis:
         - name: OutswapV1Pair
           file: OutswapV1Pair\abis\OutswapV1Pair.json
+        - name: ERC20
+          file: OutswapV1Pair\abis\ERC20.json
       eventHandlers:
         - event: Mint(indexed address,indexed address,uint256,uint256)
           handler: handleMint
@@ -47,3 +50,18 @@ templates:
           handler: handleBurn
         - event: Sync(uint112,uint112)
           handler: handleSync
+  - name: Erc20
+    kind: ethereum/contract
+    network: blast-testnet
+    source:
+      abi: ERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ""
+      file: templates\Erc20\Erc20.wasm
+      abis:
+        - name: ERC20
+          file: Erc20\abis\ERC20.json

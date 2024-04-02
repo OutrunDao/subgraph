@@ -5,6 +5,15 @@ type PairCreated @entity(immutable: true) {
   pair: Bytes! # address
 }
 
+type PairTvl @entity(immutable:false) {
+  id: String! # pairaddress
+  pair: Bytes!
+  reserve0: BigInt!
+  reserve1: BigInt!
+  symbol0: String
+  symbol1: String
+}
+
 type LiquidityHolding @entity(immutable: false) {
   id: String!
   pair: Bytes! # address
@@ -13,11 +22,7 @@ type LiquidityHolding @entity(immutable: false) {
   token1: Bytes! # address
   amount0: BigInt!
   amount1: BigInt!
-}
+  symbol0: String
+  symbol1: String
 
-type PairTvl @entity(immutable:false) {
-  id: String! # pairaddress
-  pair: Bytes!
-  reserve0: BigInt!
-  reserve1: BigInt!
 }

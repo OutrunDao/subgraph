@@ -3,12 +3,14 @@ import {
   Burn as BurnEvent,
   Sync as SyncEvent
 } from "../generated/templates/OutswapV1Pair/OutswapV1Pair";
+import { ERC20 } from "../generated/templates/Erc20/ERC20";
 import { LiquidityHolding, PairCreated, PairTvl } from "../generated/schema";
-import { BigInt } from "@graphprotocol/graph-ts";
-import { store } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Value } from "@graphprotocol/graph-ts";
+import { store, ethereum, log } from "@graphprotocol/graph-ts";
 
 export function handleMint(event: MintEvent): void {
   // entity id: pair address + user address
+
 
   let id = event.address.toHex() + "-" + event.params.to.toHex();
   let entity = LiquidityHolding.load(id);
@@ -21,6 +23,14 @@ export function handleMint(event: MintEvent): void {
   } else {
     entity.amount0 = event.params.amount0.plus(entity.amount0);
     entity.amount1 = event.params.amount1.plus(entity.amount1);
+    // const result = ethereum.call(new ethereum.SmartContractCall('ERC20',  Address.fromBytes(pairCreated.token0), 'symbol', 'symbol()', []))
+    // const result = 
+    const callRet0 = ERC20.bind(Address.fromBytes(pairCreated.token0)).try_symbol()
+    if(!callRet0.reverted) entity.symbol0 = callRet0.value
+
+    const callRet1 = ERC20.bind(Address.fromBytes(pairCreated.token1)).try_symbol()
+    if (!callRet1.reverted) entity.symbol1 = callRet1.value
+    
   }
   entity.pair = event.address;
   entity.user = event.params.to;
@@ -51,12 +61,20 @@ export function handleBurn(event: BurnEvent): void {
 export function handleSync(event: SyncEvent): void {
   let id = event.address.toHex(); 
   let entity = PairTvl.load(id)
+  let pairCreated = PairCreated.load(event.address)!;
+
   if (!entity) {
     entity = new PairTvl(id)
+    const callRet0 = ERC20.bind(Address.fromBytes(pairCreated.token0)).try_symbol()
+    if(!callRet0.reverted) entity.symbol0 = callRet0.value
+
+    const callRet1 = ERC20.bind(Address.fromBytes(pairCreated.token1)).try_symbol()
+    if (!callRet1.reverted) entity.symbol1 = callRet1.value
   }
   if (event.params.reserve0.equals(BigInt.zero()) || event.params.reserve1.equals(BigInt.zero()) ) {
     return store.remove("PairTvl", id);
   }
+  
   entity.pair = event.address
   entity.reserve0 = event.params.reserve0
   entity.reserve1 = event.params.reserve1
