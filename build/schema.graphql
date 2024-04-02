@@ -14,3 +14,10 @@ type LiquidityHolding @entity(immutable: false) {
   amount0: BigInt!
   amount1: BigInt!
 }
+
+type PairTvl @entity(immutable:false) {
+  id: String! # pairaddress
+  pair: Bytes!
+  reserve0: BigInt!
+  reserve1: BigInt!
+}

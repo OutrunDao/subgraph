@@ -1,8 +1,9 @@
 import {
   Mint as MintEvent,
   Burn as BurnEvent,
+  Sync as SyncEvent
 } from "../generated/templates/OutswapV1Pair/OutswapV1Pair";
-import { LiquidityHolding, PairCreated } from "../generated/schema";
+import { LiquidityHolding, PairCreated, PairTvl } from "../generated/schema";
 import { BigInt } from "@graphprotocol/graph-ts";
 import { store } from "@graphprotocol/graph-ts";
 
@@ -45,4 +46,19 @@ export function handleBurn(event: BurnEvent): void {
   } else {
     entity.save();
   }
+}
+
+export function handleSync(event: SyncEvent): void {
+  let id = event.address.toHex(); 
+  let entity = PairTvl.load(id)
+  if (!entity) {
+    entity = new PairTvl(id)
+  }
+  if (event.params.reserve0.equals(BigInt.zero()) || event.params.reserve1.equals(BigInt.zero()) ) {
+    return store.remove("PairTvl", id);
+  }
+  entity.pair = event.address
+  entity.reserve0 = event.params.reserve0
+  entity.reserve1 = event.params.reserve1
+  entity.save()
 }

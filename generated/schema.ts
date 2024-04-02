@@ -215,3 +215,82 @@ export class LiquidityHolding extends Entity {
     this.set("amount1", Value.fromBigInt(value));
   }
 }
+
+export class PairTvl extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save PairTvl entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type PairTvl must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`,
+      );
+      store.set("PairTvl", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): PairTvl | null {
+    return changetype<PairTvl | null>(store.get_in_block("PairTvl", id));
+  }
+
+  static load(id: string): PairTvl | null {
+    return changetype<PairTvl | null>(store.get("PairTvl", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get pair(): Bytes {
+    let value = this.get("pair");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set pair(value: Bytes) {
+    this.set("pair", Value.fromBytes(value));
+  }
+
+  get reserve0(): BigInt {
+    let value = this.get("reserve0");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set reserve0(value: BigInt) {
+    this.set("reserve0", Value.fromBigInt(value));
+  }
+
+  get reserve1(): BigInt {
+    let value = this.get("reserve1");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set reserve1(value: BigInt) {
+    this.set("reserve1", Value.fromBigInt(value));
+  }
+}

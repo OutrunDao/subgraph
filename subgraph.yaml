@@ -45,3 +45,5 @@ templates:
           handler: handleMint
         - event: Burn(indexed address,uint256,uint256,indexed address)
           handler: handleBurn
+        - event: Sync(uint112,uint112)
+          handler: handleSync
