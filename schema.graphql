@@ -12,6 +12,8 @@ type PairTvl @entity(immutable:false) {
   reserve1: BigInt!
   symbol0: String
   symbol1: String
+  token0: Bytes!
+  token1: Bytes!
 }
 
 type LiquidityHolding @entity(immutable: false) {

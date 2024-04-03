@@ -65,6 +65,9 @@ export function handleSync(event: SyncEvent): void {
 
   if (!entity) {
     entity = new PairTvl(id)
+    entity.token0 = pairCreated.token0
+    entity.token1 = pairCreated.token1
+    entity.pair = event.address
     const callRet0 = ERC20.bind(Address.fromBytes(pairCreated.token0)).try_symbol()
     if(!callRet0.reverted) entity.symbol0 = callRet0.value
 
@@ -75,7 +78,6 @@ export function handleSync(event: SyncEvent): void {
     return store.remove("PairTvl", id);
   }
   
-  entity.pair = event.address
   entity.reserve0 = event.params.reserve0
   entity.reserve1 = event.params.reserve1
   entity.save()
