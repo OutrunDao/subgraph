@@ -492,14 +492,14 @@ export function handleTransfer(event: TransferEvent): void {
   //   transaction.save()
   }
 
-  if (from.notEqual(Address.fromHexString(ADDRESS_ZERO)) && from != pair.id) {
+  if (from.notEqual(Address.zero()) && from != pair.id) {
     let fromUserLiquidityPosition = createLiquidityPosition(event.address, from)
     fromUserLiquidityPosition.liquidityTokenBalance = formatUnits(pairContract.balanceOf(from), BigInt.fromString('18'))
     fromUserLiquidityPosition.save()
     // createLiquiditySnapshot(fromUserLiquidityPosition, event)
   }
 
-  if (event.params.to.toHexString() != ADDRESS_ZERO && to!= pair.id) {
+  if (to.notEqual(Address.zero()) && to!= pair.id) {
     let toUserLiquidityPosition = createLiquidityPosition(event.address, to)
     toUserLiquidityPosition.liquidityTokenBalance = formatUnits(pairContract.balanceOf(to), BigInt.fromString('18'))
     toUserLiquidityPosition.save()

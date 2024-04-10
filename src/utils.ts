@@ -49,6 +49,7 @@ export function createLiquidityPosition(exchange: Address, user: Address): Liqui
 
 
 export function createUser(address: Address): void {
+  // if (address.equals(Address.zero())) return
   let id = address
   let user = User.load(id)
   if (user === null) {
