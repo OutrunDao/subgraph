@@ -3,11 +3,13 @@ import {
   Burn as BurnEvent,
   Sync as SyncEvent,
   Swap as SwapEvent,
+  Transfer as TransferEvent,
+  OutswapV1Pair,
 } from "../generated/templates/OutswapV1Pair/OutswapV1Pair";
-import { LiquidityPosition, Pair, Token, User, Bundle, SwapFactory } from "../generated/schema";
+import { LiquidityPosition, Pair, Token,  User,  Bundle, SwapFactory } from "../generated/schema";
 import { Address, BigDecimal, BigInt, Bytes, Value } from "@graphprotocol/graph-ts";
-import { createLiquidityPosition, formatUnits, updatePairDayData } from "./utils";
-import { BUNDLE_ETH, FACTORY_ADDRESS, ONE_BI, ZERO_BD } from "./constant";
+import { createLiquidityPosition, createUser, formatUnits, updatePairDayData } from "./utils";
+import { ADDRESS_ZERO, BUNDLE_ETH, FACTORY_ADDRESS, ONE_BI, ZERO_BD } from "./constant";
 import { findEthPerToken, getEthPriceInUSD, getTrackedLiquidityUSD, getTrackedVolumeUSD } from "./pricing";
 
 export function handleMint(event: MintEvent): void {
@@ -16,7 +18,7 @@ export function handleMint(event: MintEvent): void {
   // let mint = MintEvent.load(mints[mints.length - 1])
 
   let pair = Pair.load(event.address)!
-  let factory = SwapFactory.load(Bytes.fromHexString(FACTORY_ADDRESS))!
+  let factory = SwapFactory.load(FACTORY_ADDRESS)!
 
   let token0 = Token.load(pair.token0)!
   let token1 = Token.load(pair.token1)!
@@ -74,7 +76,7 @@ export function handleBurn(event: BurnEvent): void {
   //   return
   // }
   let pair = Pair.load(event.address)!
-  let factory = SwapFactory.load(Bytes.fromHexString(FACTORY_ADDRESS))!
+  let factory = SwapFactory.load(FACTORY_ADDRESS)!
 
   //update token info
   let token0 = Token.load(pair.token0)!
@@ -176,7 +178,7 @@ export function handleSwap(event: SwapEvent): void {
   pair.save()
 
   // update global values, only used tracked amounts for volume
-  let factory = SwapFactory.load(Bytes.fromHexString(FACTORY_ADDRESS))!
+  let factory = SwapFactory.load(FACTORY_ADDRESS)!
   factory.totalVolumeUSD = factory.totalVolumeUSD.plus(trackedAmountUSD)
   factory.totalVolumeETH = factory.totalVolumeETH.plus(trackedAmountETH)
   factory.untrackedVolumeUSD = factory.untrackedVolumeUSD.plus(derivedAmountUSD)
@@ -273,7 +275,7 @@ export function handleSwap(event: SwapEvent): void {
 }
 
 export function handleSync(event: SyncEvent): void {
-  const factory = SwapFactory.load(Bytes.fromHexString(FACTORY_ADDRESS))!
+  const factory = SwapFactory.load(FACTORY_ADDRESS)!
   const pair = Pair.load(event.address)!
   const token0 = Token.load(pair.token0)!
   const token1 = Token.load(pair.token1)!
@@ -323,4 +325,186 @@ export function handleSync(event: SyncEvent): void {
   factory.save()
   token0.save()
   token1.save()
+}
+
+
+export function handleTransfer(event: TransferEvent): void {
+  // ignore initial transfers for first adds
+  if (event.params.to.toHexString() == ADDRESS_ZERO && event.params.value.equals(BigInt.fromI32(1000))) {
+    return
+  }
+
+  let factory = SwapFactory.load(FACTORY_ADDRESS)
+  let transactionHash = event.transaction.hash.toHexString()
+
+  // user stats
+  let from = event.params.from
+  createUser(from)
+  let to = event.params.to
+  createUser(to)
+
+  // get pair and load contract
+  let pair = Pair.load(event.address)!
+  let pairContract = OutswapV1Pair.bind(event.address)
+
+  // liquidity token amount being transfered
+  let value = formatUnits(event.params.value, BigInt.fromI32(18))
+
+  // get or create transaction
+  // let transaction = Transaction.load(transactionHash)
+  // if (transaction === null) {
+  //   transaction = new Transaction(transactionHash)
+  //   transaction.blockNumber = event.block.number
+  //   transaction.timestamp = event.block.timestamp
+  //   transaction.mints = []
+  //   transaction.burns = []
+  //   transaction.swaps = []
+  // }
+
+  // mints
+  // let mints = transaction.mints
+  if (from.toHexString() == ADDRESS_ZERO) {
+    // update total supply
+    pair.totalSupply = pair.totalSupply.plus(value)
+    pair.save()
+
+    // create new mint if no mints so far or if last one is done already
+    // if (mints.length === 0 || isCompleteMint(mints[mints.length - 1])) {
+    //   let mint = new MintEvent(
+    //     event.transaction.hash
+    //       .toHexString()
+    //       .concat('-')
+    //       .concat(BigInt.fromI32(mints.length).toString())
+    //   )
+    //   mint.transaction = transaction.id
+    //   mint.pair = pair.id
+    //   mint.to = to
+    //   mint.liquidity = value
+    //   mint.timestamp = transaction.timestamp
+    //   mint.transaction = transaction.id
+    //   mint.save()
+
+    //   // update mints in transaction
+    //   transaction.mints = mints.concat([mint.id])
+
+    //   // save entities
+    //   transaction.save()
+    //   factory.save()
+    // }
+  }
+
+  // case where direct send first on ETH withdrawls
+  // if (event.params.to == pair.id) {
+  //   let burns = transaction.burns
+  //   let burn = new BurnEvent(
+  //     event.transaction.hash
+  //       .toHexString()
+  //       .concat('-')
+  //       .concat(BigInt.fromI32(burns.length).toString())
+  //   )
+  //   burn.transaction = transaction.id
+  //   burn.pair = pair.id
+  //   burn.liquidity = value
+  //   burn.timestamp = transaction.timestamp
+  //   burn.to = event.params.to
+  //   burn.sender = event.params.from
+  //   burn.needsComplete = true
+  //   burn.transaction = transaction.id
+  //   burn.save()
+
+  //   // TODO: Consider using .concat() for handling array updates to protect
+  //   // against unintended side effects for other code paths.
+  //   burns.push(burn.id)
+  //   transaction.burns = burns
+  //   transaction.save()
+  // }
+
+  // burn
+  if (event.params.to.toHexString() == ADDRESS_ZERO && event.params.from== pair.id) {
+    pair.totalSupply = pair.totalSupply.minus(value)
+    pair.save()
+
+    // this is a new instance of a logical burn
+  //   let burns = transaction.burns
+  //   let burn: BurnEvent
+  //   if (burns.length > 0) {
+  //     let currentBurn = BurnEvent.load(burns[burns.length - 1])
+  //     if (currentBurn.needsComplete) {
+  //       burn = currentBurn as BurnEvent
+  //     } else {
+  //       burn = new BurnEvent(
+  //         event.transaction.hash
+  //           .toHexString()
+  //           .concat('-')
+  //           .concat(BigInt.fromI32(burns.length).toString())
+  //       )
+  //       burn.transaction = transaction.id
+  //       burn.needsComplete = false
+  //       burn.pair = pair.id
+  //       burn.liquidity = value
+  //       burn.transaction = transaction.id
+  //       burn.timestamp = transaction.timestamp
+  //     }
+  //   } else {
+  //     burn = new BurnEvent(
+  //       event.transaction.hash
+  //         .toHexString()
+  //         .concat('-')
+  //         .concat(BigInt.fromI32(burns.length).toString())
+  //     )
+  //     burn.transaction = transaction.id
+  //     burn.needsComplete = false
+  //     burn.pair = pair.id
+  //     burn.liquidity = value
+  //     burn.transaction = transaction.id
+  //     burn.timestamp = transaction.timestamp
+  //   }
+
+  //   // if this logical burn included a fee mint, account for this
+  //   if (mints.length !== 0 && !isCompleteMint(mints[mints.length - 1])) {
+  //     let mint = MintEvent.load(mints[mints.length - 1])
+  //     burn.feeTo = mint.to
+  //     burn.feeLiquidity = mint.liquidity
+  //     // remove the logical mint
+  //     store.remove('Mint', mints[mints.length - 1])
+  //     // update the transaction
+
+  //     // TODO: Consider using .slice().pop() to protect against unintended
+  //     // side effects for other code paths.
+  //     mints.pop()
+  //     transaction.mints = mints
+  //     transaction.save()
+  //   }
+  //   burn.save()
+  //   // if accessing last one, replace it
+  //   if (burn.needsComplete) {
+  //     // TODO: Consider using .slice(0, -1).concat() to protect against
+  //     // unintended side effects for other code paths.
+  //     burns[burns.length - 1] = burn.id
+  //   }
+  //   // else add new one
+  //   else {
+  //     // TODO: Consider using .concat() for handling array updates to protect
+  //     // against unintended side effects for other code paths.
+  //     burns.push(burn.id)
+  //   }
+  //   transaction.burns = burns
+  //   transaction.save()
+  }
+
+  if (from.notEqual(Address.fromHexString(ADDRESS_ZERO)) && from != pair.id) {
+    let fromUserLiquidityPosition = createLiquidityPosition(event.address, from)
+    fromUserLiquidityPosition.liquidityTokenBalance = formatUnits(pairContract.balanceOf(from), BigInt.fromString('18'))
+    fromUserLiquidityPosition.save()
+    // createLiquiditySnapshot(fromUserLiquidityPosition, event)
+  }
+
+  if (event.params.to.toHexString() != ADDRESS_ZERO && to!= pair.id) {
+    let toUserLiquidityPosition = createLiquidityPosition(event.address, to)
+    toUserLiquidityPosition.liquidityTokenBalance = formatUnits(pairContract.balanceOf(to), BigInt.fromString('18'))
+    toUserLiquidityPosition.save()
+    // createLiquiditySnapshot(toUserLiquidityPosition, event)
+  }
+
+  // transaction.save()
 }

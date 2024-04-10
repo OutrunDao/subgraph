@@ -1,4 +1,4 @@
-import { BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
+import { Address, BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { PairCreated as PairCreatedEvent } from "../generated/OutswapV1Factory/OutswapV1Factory"
 import { Bundle, Pair, SwapFactory, Token } from "../generated/schema"
 import { OutswapV1Pair } from "../generated/templates"
@@ -7,9 +7,9 @@ import { BUNDLE_ETH, FACTORY_ADDRESS, ZERO_BD, ZERO_BI } from "./constant";
 
 export function handlePairCreated(event: PairCreatedEvent): void {
   OutswapV1Pair.create(event.params.pair);
-  let factory = SwapFactory.load(Bytes.fromHexString(FACTORY_ADDRESS))
+  let factory = SwapFactory.load(FACTORY_ADDRESS)
   if (factory === null) {
-    factory = new SwapFactory(Bytes.fromHexString(FACTORY_ADDRESS))
+    factory = new SwapFactory(FACTORY_ADDRESS)
     factory.pairCount = 0;
     factory.totalVolumeETH = ZERO_BD
     factory.totalLiquidityETH = ZERO_BD

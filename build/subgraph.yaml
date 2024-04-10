@@ -44,6 +44,8 @@ templates:
       abis:
         - name: OutswapV1Pair
           file: OutswapV1Pair\abis\OutswapV1Pair.json
+        - name: OutswapV1Factory
+          file: OutswapV1Pair\abis\OutswapV1Factory.json
         - name: ERC20
           file: OutswapV1Pair\abis\ERC20.json
         - name: Factory
@@ -53,6 +55,8 @@ templates:
           handler: handleMint
         - event: Burn(indexed address,uint256,uint256,indexed address)
           handler: handleBurn
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
         - event: Sync(uint112,uint112)
           handler: handleSync
         - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)

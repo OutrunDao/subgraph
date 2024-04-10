@@ -18,6 +18,13 @@ export function formatUnits(amount: BigInt, decimals: BigInt): BigDecimal {
   return amount.toBigDecimal().div(exponentToBigDecimal(decimals))
 }
 
+export function isIncludeIn(list: string[], addr: Bytes): bool {
+  for (let i = 0; i< list.length;i ++) {
+    if (Address.fromString(list[i]).equals(addr)) return true
+  }
+  return false
+}
+
 
 
 export function createLiquidityPosition(exchange: Address, user: Address): LiquidityPosition {
@@ -27,12 +34,12 @@ export function createLiquidityPosition(exchange: Address, user: Address): Liqui
     .concat(user.toHexString())
   let liquidityTokenBalance = LiquidityPosition.load(id)
   if (liquidityTokenBalance === null) {
-    let pair = Pair.load(Bytes.fromHexString(exchange.toHexString()))! 
+    let pair = Pair.load(exchange)! 
     pair.liquidityProviderCount = pair.liquidityProviderCount.plus(ONE_BI)
     liquidityTokenBalance = new LiquidityPosition(id)
     liquidityTokenBalance.liquidityTokenBalance = ZERO_BD
-    liquidityTokenBalance.pair = Bytes.fromHexString(exchange.toHexString())
-    liquidityTokenBalance.user = Bytes.fromHexString(user.toHexString())
+    liquidityTokenBalance.pair = exchange
+    liquidityTokenBalance.user = user
     liquidityTokenBalance.save()
     pair.save()
   }
@@ -42,7 +49,7 @@ export function createLiquidityPosition(exchange: Address, user: Address): Liqui
 
 
 export function createUser(address: Address): void {
-  let id = Bytes.fromHexString(address.toHexString())
+  let id = address
   let user = User.load(id)
   if (user === null) {
     user = new User(id)

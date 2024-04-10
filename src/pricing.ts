@@ -3,25 +3,27 @@ import { Pair, Token, Bundle } from '../generated/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, ADDRESS_ZERO, ONE_BD, UNTRACKED_PAIRS, BUNDLE_ETH, FACTORY_ADDRESS ,ETH_ADDRESS,USD_ADDRESS, RETH_ADDRESS, USD_ETH_PAIRS} from './constant'
 import {OutswapV1Factory} from '../generated/OutswapV1Factory/OutswapV1Factory'
-const factoryContract = OutswapV1Factory.bind(Address.fromString(FACTORY_ADDRESS))
+import { isIncludeIn } from './utils'
+const factoryContract = OutswapV1Factory.bind(FACTORY_ADDRESS)
 
 export function getEthPriceInUSD(): BigDecimal {
   let pairs = [] as Pair[]
-  for (let i = 0; i<= USD_ETH_PAIRS.length;i++) {
+  for (let i = 0; i< USD_ETH_PAIRS.length;i++) {
     let pair = Pair.load(Address.fromHexString(USD_ETH_PAIRS[i]))
     if (pair !== null) pairs.push(pair)
   }
   if (!pairs.length) return ZERO_BD
 
   let totalLiquidityETH = ZERO_BD;
-  for (let i=0; i<= pairs.length; i++) {
-    totalLiquidityETH = ETH_ADDRESS.includes(pairs[i].token0.toHex()) ? totalLiquidityETH.plus(pairs[i].reserve0) : totalLiquidityETH.plus(pairs[i].reserve1)
+  for (let i=0; i< pairs.length; i++) {
+    
+    totalLiquidityETH = isIncludeIn(ETH_ADDRESS, pairs[i].token0) ? totalLiquidityETH.plus(pairs[i].reserve0) : totalLiquidityETH.plus(pairs[i].reserve1)
   }
   if (totalLiquidityETH.equals(ZERO_BD)) return ZERO_BD
   let price = ZERO_BD
-  for (let i=0; i<= pairs.length; i++) {
+  for (let i=0; i< pairs.length; i++) {
     let pairNext = pairs[i]
-    if (ETH_ADDRESS.includes(pairNext.token0.toHex())) {
+    if (isIncludeIn(ETH_ADDRESS, pairNext.token0)) {
       // token0 is eth, token1 is usd
       price = pairNext.token1Price.times(pairNext.reserve0.div(totalLiquidityETH)).plus(price)
     } else {
@@ -47,7 +49,7 @@ let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('2')
  * @todo update to be derived ETH (add stablecoin estimates)
  **/
 export function findEthPerToken(token: Token): BigDecimal {
-  if (ETH_ADDRESS.includes(token.id.toHex())) {
+  if (isIncludeIn(ETH_ADDRESS, token.id)) {
     return ONE_BD
   }
   // loop through whitelist and check if paired with any
