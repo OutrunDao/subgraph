@@ -8,7 +8,7 @@ dataSources:
     name: OutswapV1Factory
     network: blast-testnet
     source:
-      address: "0x3cEca1C6e131255e7C95788D40581934E84A1F9d"
+      address: "0xb65EEEa6f65A2991F582c65D0f86557320446070"
       abi: OutswapV1Factory
       startBlock: 3305611
     mapping:
