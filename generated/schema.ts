@@ -437,11 +437,11 @@ export class Pair extends Entity {
     this.set("reserveUSD", Value.fromBigDecimal(value));
   }
 
-  get pairHourData(): PairHourDataLoader {
-    return new PairHourDataLoader(
+  get pairDayData(): PairDayDataLoader {
+    return new PairDayDataLoader(
       "Pair",
       this.get("id")!.toBytes().toHexString(),
-      "pairHourData",
+      "pairDayData",
     );
   }
 
@@ -710,6 +710,19 @@ export class PairDayData extends Entity {
 
   set pairAddress(value: Bytes) {
     this.set("pairAddress", Value.fromBytes(value));
+  }
+
+  get pair(): Bytes {
+    let value = this.get("pair");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set pair(value: Bytes) {
+    this.set("pair", Value.fromBytes(value));
   }
 
   get token0(): Bytes {
@@ -1048,7 +1061,7 @@ export class Bundle extends Entity {
   }
 }
 
-export class PairHourDataLoader extends Entity {
+export class PairDayDataLoader extends Entity {
   _entity: string;
   _field: string;
   _id: string;
@@ -1060,9 +1073,9 @@ export class PairHourDataLoader extends Entity {
     this._field = field;
   }
 
-  load(): PairHourData[] {
+  load(): PairDayData[] {
     let value = store.loadRelated(this._entity, this._id, this._field);
-    return changetype<PairHourData[]>(value);
+    return changetype<PairDayData[]>(value);
   }
 }
 
