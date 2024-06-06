@@ -39,10 +39,10 @@ export function getEthPriceInUSD(): BigDecimal {
 let WHITELIST: string[] = ETH_ADDRESS.concat(USD_ADDRESS)
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
-let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('400000')
+let MINIMUM_USD_THRESHOLD_NEW_PAIRS =ZERO_BD
 
 // minimum liquidity for price to get tracked
-let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('2')
+let MINIMUM_LIQUIDITY_THRESHOLD_ETH = ZERO_BD
 
 /**
  * Search through graph to find derived Eth per token.
@@ -136,8 +136,12 @@ export function getTrackedVolumeUSD(
     return tokenAmount1.times(price1)
   }
 
-  // neither token is on white list, tracked volume is 0
-  return ZERO_BD
+  return tokenAmount0
+      .times(price0)
+      .plus(tokenAmount1.times(price1))
+      .div(BigDecimal.fromString('2'))
+  // // neither token is on white list, tracked volume is 0
+  // return ZERO_BD
 }
 
 /**
