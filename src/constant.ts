@@ -7,7 +7,7 @@ export const ZERO_BD = BigDecimal.zero()
 export const ONE_BD = BigDecimal.fromString('1')
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
-export const FACTORY_ADDRESS = Address.fromString('0x01923F769C3B287A3C69a931736CAC02d6cF1fd6')
+export const FACTORY_ADDRESS = Address.fromString('0x583758BBD5B5fAF2983Be70B8E551829E1fbCc91')
 
 
 
@@ -32,7 +32,7 @@ export const UNTRACKED_PAIRS: string[] = []
 // usdt pairs like WETH_USDB RETH_USDB 
 export const USD_ETH_PAIRS = [
   // RETH-RUSD
-  '0x14C597Edf2fa0B26bBc892DCafC7D84241815995'
+  '0x523d550dFF0fd7FF7fc21DF6B2BB5CE6dFB5f3f0'
 ]
 
 export const BUNDLE_ETH = Bytes.fromHexString('0x01')
