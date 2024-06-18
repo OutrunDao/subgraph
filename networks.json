@@ -3,6 +3,14 @@
     "OutswapV1Factory": {
       "address": "0x583758BBD5B5fAF2983Be70B8E551829E1fbCc91",
       "startBlock": 6524536
+    },
+    "ORETHStakeManager": {
+      "address": "0x7F5b6C208D2F426F17caae9db9331B9CB7a4a0CF",
+      "startBlock": 6179741
+    },
+    "ORUSDStakeManager": {
+      "address": "0xC138764f11D922a4dB7bc4A83fD9bA10F7cfCDe1",
+      "startBlock": 6180011
     }
   }
 }

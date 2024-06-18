@@ -115,3 +115,32 @@ type Bundle @entity {
   id: Bytes!
   ethPrice: BigDecimal! # price of ETH usd
 }
+
+type StakeORETH @entity(immutable: true) {
+  id: Bytes!
+  positionId: BigInt! # uint256
+  account: Bytes! # address
+  amountInORETH: BigDecimal! # uint256
+  amountInOSETH: BigDecimal! # uint256
+  amountInREY: BigDecimal! # uint256
+  status: BigInt!,
+  deadline: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+
+type StakeORUSD @entity(immutable: true) {
+  id: Bytes!
+  positionId: BigInt! # uint256
+  account: Bytes! # address
+  amountInORUSD: BigDecimal! # uint256
+  amountInOSUSD: BigDecimal! # uint256
+  amountInRUY: BigDecimal! # uint256
+  deadline: BigInt! # uint256
+    status: BigInt!,
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

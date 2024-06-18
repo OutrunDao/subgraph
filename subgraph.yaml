@@ -27,6 +27,55 @@ dataSources:
         - event: PairCreated(indexed address,indexed address,address,uint256)
           handler: handlePairCreated
       file: ./src/OutswapV1Factory.ts
+  - kind: ethereum
+    name: ORETHStakeManager
+    network: blast-testnet
+    source:
+      address: "0x7F5b6C208D2F426F17caae9db9331B9CB7a4a0CF"
+      abi: ORETHStakeManager
+      startBlock: 6179741
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - StakeORETH
+      abis:
+        - name: ORETHStakeManager
+          file: ./abis/ORETHStakeManager.json
+      eventHandlers:
+        - event: ExtendLockTime(indexed uint256,uint256,uint256,uint256)
+          handler: handleExtendLockTime
+        - event: StakeORETH(indexed uint256,indexed address,uint256,uint256,uint256,uint256)
+          handler: handleStakeORETH
+        - event: Unstake(indexed uint256,uint256,uint256,uint256)
+          handler: handleUnstake
+      file: ./src/oreth-stake-manager.ts
+  - kind: ethereum
+    name: ORUSDStakeManager
+    network: blast-testnet
+    source:
+      address: "0xC138764f11D922a4dB7bc4A83fD9bA10F7cfCDe1"
+      abi: ORUSDStakeManager
+      startBlock: 6180011
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - StakeORUSD
+      abis:
+        - name: ORUSDStakeManager
+          file: ./abis/ORUSDStakeManager.json
+      eventHandlers:
+        
+        - event: ExtendLockTime(indexed uint256,uint256,uint256,uint256)
+          handler: handleExtendLockTime
+        - event: StakeORUSD(indexed uint256,indexed address,uint256,uint256,uint256,uint256)
+          handler: handleStakeORUSD
+        - event: Unstake(indexed uint256,uint256,uint256,uint256)
+          handler: handleUnstake
+      file: ./src/orusd-stake-manager.ts
 templates:
   - name: OutswapV1Pair
     kind: ethereum/contract
@@ -61,4 +110,3 @@ templates:
           handler: handleSync
         - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
           handler: handleSwap
-    
