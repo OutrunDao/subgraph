@@ -1,7 +1,6 @@
 import { Address, BigDecimal, BigInt, Bytes, store } from "@graphprotocol/graph-ts";
 
 import {
-  ClaimMaxGas as ClaimMaxGasEvent,
   ExtendLockTime as ExtendLockTimeEvent,
   StakeORUSD as StakeORUSDEvent,
   Unstake as UnstakeEvent,

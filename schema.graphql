@@ -116,7 +116,7 @@ type Bundle @entity {
   ethPrice: BigDecimal! # price of ETH usd
 }
 
-type StakeORETH @entity(immutable: true) {
+type StakeORETH @entity(immutable: false) {
   id: Bytes!
   positionId: BigInt! # uint256
   account: Bytes! # address
@@ -131,7 +131,7 @@ type StakeORETH @entity(immutable: true) {
 }
 
 
-type StakeORUSD @entity(immutable: true) {
+type StakeORUSD @entity(immutable: false) {
   id: Bytes!
   positionId: BigInt! # uint256
   account: Bytes! # address
