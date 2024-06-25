@@ -8,7 +8,7 @@ dataSources:
     name: OutswapV1Factory
     network: blast-testnet
     source:
-      address: "0x583758BBD5B5fAF2983Be70B8E551829E1fbCc91"
+      address: "0x7388d4A76D6Ec12946652c2953cd17B70E457f03"
       abi: OutswapV1Factory
       startBlock: 6524536
     mapping:
@@ -31,7 +31,7 @@ dataSources:
     name: ORETHStakeManager
     network: blast-testnet
     source:
-      address: "0x7F5b6C208D2F426F17caae9db9331B9CB7a4a0CF"
+      address: "0x2FB88bb0fc7175212b49E6577020e74272B28B47"
       abi: ORETHStakeManager
       startBlock: 6179741
     mapping:
@@ -55,7 +55,7 @@ dataSources:
     name: ORUSDStakeManager
     network: blast-testnet
     source:
-      address: "0xC138764f11D922a4dB7bc4A83fD9bA10F7cfCDe1"
+      address: "0x082fcCB4Ef497B7cC856e71DcAD81763B15916Bc"
       abi: ORUSDStakeManager
       startBlock: 6180011
     mapping:
